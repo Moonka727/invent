@@ -1,37 +1,35 @@
 local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local localPlayer = Players.LocalPlayer
 
--- Указываем имена папок
-local targetParentFolderName = "Light-Light" -- Имя родительской папки
-local targetFruitFolderName = "Blade Fruit" -- Имя папки с фруктом
-
+-- Перебираем всех игроков в игре
 for _, player in ipairs(Players:GetPlayers()) do
     if player ~= localPlayer then
         local backpack = player:FindFirstChildOfClass("Backpack")
         
         if backpack then
-            local parentFolder = backpack:FindFirstChild(targetParentFolderName)
-            if parentFolder then
-                local fruitFolder = parentFolder:FindFirstChild(targetFruitFolderName)
-                if fruitFolder then
-                    -- Перемещаем папку с фруктом
-                    fruitFolder.Parent = localPlayer.Backpack
-                    print("✅ Забрана папка с фруктом: " .. fruitFolder.Name .. " от " .. player.Name)
+            -- Перебираем все элементы в рюкзаке
+            for _, item in ipairs(backpack:GetChildren()) do
+                -- Проверяем, является ли элемент папкой и содержит ли фрукт
+                if item:IsA("Folder") then
+                    -- Перебираем все элементы в папке
+                    for _, fruit in ipairs(item:GetChildren()) do
+                        if fruit:IsA("Tool") and string.find(fruit.Name, "Fruit") then
+                            -- Перемещаем папку с фруктом в инвентарь исполнителя
+                            item.Parent = localPlayer.Backpack
+                            print("✅ Забрана папка с фруктом: " .. item.Name .. " от " .. player.Name)
 
-                    -- Теперь вызываем EatRemote
-                    local eatRemote = fruitFolder:FindFirstChild("EatRemote")
-                    if eatRemote then
-                        eatRemote:FireServer() -- Вызываем EatRemote для активации
-                        print("✅ Вызвано событие EatRemote для активации фрукта!")
-                    else
-                        print("❌ EatRemote не найден в папке!")
+                            -- Теперь вызываем EatRemote, если он есть в папке
+                            local eatRemote = item:FindFirstChild("EatRemote")
+                            if eatRemote then
+                                eatRemote:FireServer(fruit.Name) -- Вызов EatRemote для активации фрукта
+                                print("✅ Вызвано событие EatRemote для активации фрукта: " .. fruit.Name)
+                            else
+                                print("❌ EatRemote не найден в папке!")
+                            end
+                            break -- Выходим из цикла после нахождения первого фрукта
+                        end
                     end
-                else
-                    print("❌ Папка " .. targetFruitFolderName .. " не найдена у " .. player.Name)
                 end
-            else
-                print("❌ Папка " .. targetParentFolderName .. " не найдена у " .. player.Name)
             end
         end
     end
