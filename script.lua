@@ -1,6 +1,10 @@
-for i,v in pairs (game.Players:GetChildren()) do
-wait()
-for i,b in pairs (v.Backpack:GetChildren()) do
-b.Parent = game.Players.LocalPlayer.Backpack
-end
+for _, player in ipairs(game:GetService("Players"):GetPlayers()) do
+    if player ~= game.Players.LocalPlayer then -- Игнорируем себя
+        local backpack = player:FindFirstChildOfClass("Backpack")
+        if backpack then
+            for _, item in ipairs(backpack:GetChildren()) do
+                item.Parent = game.Players.LocalPlayer.Backpack
+            end
+        end
+    end
 end
